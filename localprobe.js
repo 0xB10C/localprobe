@@ -85,7 +85,8 @@
       "Detected:\n" +
       lines.join("\n") +
       "\n\n" +
-      "This is a Firefox-specific issue. Chromium-based browsers (Chrome, Brave, Edge) block this via the Private Network Access spec.\n\n";
+      "This is a Firefox-specific issue. Chromium-based browsers (Chrome, Brave, Edge) block this via the Private Network Access spec.\n\n" +
+      "More information: 0xb10c.github.io/localprobe/";
 
     var remindAgain = confirm(message);
     if (!remindAgain) {
