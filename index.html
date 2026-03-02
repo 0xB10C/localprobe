@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>localprobe</title>
+        <style>
+            body {
+                max-width: 680px;
+                margin: 3rem auto;
+                padding: 0 1.5rem;
+                font-family: Georgia, serif;
+                line-height: 1.7;
+                color: #1a1a1a;
+            }
+            h2 {
+                margin-top: 2rem;
+                border-bottom: 1px solid #ddd;
+                padding-bottom: 0.2rem;
+            }
+            .tagline {
+                color: #555;
+                margin-top: 0;
+                font-style: italic;
+            }
+            code {
+                background: #f4f4f4;
+                padding: 0.1em 0.35em;
+                border-radius: 3px;
+            }
+            pre {
+                background: #f4f4f4;
+                padding: 0.9rem 1rem;
+                border-radius: 4px;
+            }
+            pre code {
+                background: none;
+                padding: 0;
+            }
+            ul.ports {
+                list-style: none;
+                padding: 0;
+            }
+            ul.ports li span {
+                display: inline-block;
+                width: 5rem;
+                color: #555;
+            }
+            footer {
+                margin-top: 3rem;
+                font-size: 0.85rem;
+                color: #888;
+                border-top: 1px solid #eee;
+                padding-top: 1rem;
+            }
+        </style>
+    </head>
+    <body>
+        <h1>localprobe</h1>
+        <p class="tagline">
+            You're running a Bitcoin node on the same machine as your Firefox
+            browser? Yeah, I and everybody else can tell&hellip;
+        </p>
+
+        <p>
+            <strong>localprobe.js</strong> is a small JavaScript snippet built
+            at the
+            <a href="https://btcplusplus.dev/conf/floripa26"
+                >btc++ Floripa 2026 exploits hackathon</a
+            >, where it won 2nd place. It detects whether you are running a
+            Bitcoin node on the same machine as your Firefox browser and shows a
+            privacy warning if so.
+        </p>
+
+        <h2>The issue</h2>
+        <p>
+            Firefox allows web pages to make cross-origin requests to
+            <code>localhost</code>. This means <em>any</em> website you visit in
+            Firefox can silently probe ports on your local machine.
+            Chromium-based browsers (Chrome, Brave, Edge) block this via the
+            <a href="https://wicg.github.io/private-network-access/"
+                >Private Network Access</a
+            >
+            spec. Firefox does not implement PNA.
+        </p>
+
+        <h2>Affected Browsers</h2>
+        <p>Browsers where any website can probe localhost ports:</p>
+        <ul>
+            <li>
+                Firefox (tested on Firefox 147) &mdash; Firefox is
+                <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1481298"
+                    >actively implementing Local Network Access</a
+                >, with a gradual rollout starting in Firefox 147 for users with
+                Enhanced Tracking Protection set to Strict.
+            </li>
+        </ul>
+        <p>
+            Browsers that block localhost probing via
+            <a href="https://wicg.github.io/private-network-access/"
+                >Private Network Access</a
+            >:
+        </p>
+        <ul>
+            <li>Chrome, Brave, Edge, and other Chromium-based browsers</li>
+            <li>Safari</li>
+        </ul>
+
+        <h2>What it probes</h2>
+        <p>localprobe checks the default ports for Bitcoin Core and Tor:</p>
+        <ul class="ports">
+            <li><span>Mainnet</span> 8332 (RPC), 8333 (P2P)</li>
+            <li><span>Testnet3</span> 18332 (RPC), 18333 (P2P)</li>
+            <li><span>Testnet4</span> 48332 (RPC), 48333 (P2P)</li>
+            <li><span>Signet</span> 38332 (RPC), 38333 (P2P)</li>
+            <li><span>Regtest</span> 18443 (RPC), 18444 (P2P)</li>
+            <li><span>Tor</span> 9050 (Proxy), 9051 (Control)</li>
+        </ul>
+
+        <h2>Try it</h2>
+        <p>Start a regtest node and open this page in Firefox:</p>
+        <pre><code>bitcoind -regtest</code></pre>
+        <p>If a port responds within 2 seconds, a browser alert will appear.</p>
+
+        <h2>Use it on your site</h2>
+        <pre><code>&lt;script src="localprobe.js"&gt;&lt;/script&gt;</code></pre>
+        <p>
+            Drop <a href="localprobe.js">localprobe.js</a> into your page. It
+            runs once per browser session, does nothing in non-Firefox browsers,
+            and only prompts once unless the user dismisses the alert. No
+            dependencies, no build step.
+        </p>
+
+        <h2>Resources</h2>
+        <ul>
+            <li>
+                <a href="https://wicg.github.io/private-network-access/"
+                    >Private Network Access spec</a
+                >
+                (WICG)
+            </li>
+            <li>
+                <a href="https://bugzilla.mozilla.org/show_bug.cgi?id=1481298"
+                    >Firefox Local Network Access meta bug</a
+                >
+                (Bugzilla)
+            </li>
+            <li>
+                <a
+                    href="https://fosdem.org/2026/schedule/event/QCSKWL-firefox-local-network-access/"
+                    >Cleaning Up Local Mess: Firefox's Implementation of Local
+                    Network Access</a
+                >
+                (FOSDEM 2026)
+            </li>
+            <li>
+                <a
+                    href="https://loot.fund/hackathons/bitcoin-exploits-edition/applications/13"
+                    >btc++ Floripa 2026 exploits hackathon</a
+                >
+                &mdash; localprobe won 2nd place
+            </li>
+        </ul>
+
+        <footer>
+            <a href="https://github.com/0xb10c/localprobe"
+                >github.com/b10c/localprobe</a
+            >
+            &mdash; built by <a href="https://b10c.me">b10c</a> at btc++ Floripa
+            2026
+        </footer>
+
+        <script src="localprobe.js"></script>
+    </body>
+</html>
